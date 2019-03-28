@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>focus</title>
+    <style type="text/css">
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    .box{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1280px;
+        height: 720px;
+		background:url(./images/BG.png) no-repeat;
+       
+    }
+    .list{
+        position: absolute;
+        left: 70px;
+        top: 139px;
+        width: 1200px;
+        height: 600px;
+        list-style: none;
+    }
+    .list > li{
+        float: left;
+        position: relative;
+        width: 289px;
+        height: 255px;
+        text-align: center;
+		border-radius:5px;
+		color:#FFF;
+    }
+    #focus{
+        position: absolute;
+        width: 0;
+        height: 0;
+		left:0;
+		top:0;
+		margin-top:-2px;
+		margin-left:-2px;
+		background:url(./images/listFocus.png) no-repeat;
+		background-size:279px 241px;
+        transition: 300ms;
+    }
+	.logo{
+		position:absolute;
+		left:54px;
+		top:48px;
+		z-index:999;
+	}
+	.tel{
+		position:absolute;
+		left:1060px;
+		top:650px;
+		z-index:999;
+	}
+	.welcome{
+		position:absolute;
+		left:768px;
+		top:68px;
+		z-index:999;
+		font-size:22px;
+		color:#c2c2c3;
+		padding-left:32px;
+		background:url(./images/tip.png) no-repeat left center;
+	}
+	.content{
+		font-size:32px;
+		margin-top:50px;
+	}
+	.getin{
+		font-size:24px;
+		margin-top:30px;
+	}
+    </style>
+</head>
+<body bgcolor="transparent">
+ <img class="logo" src="./images/LOGO.png"/>
+ <img class="tel" src="./images/tel.png">
+ <div class="welcome">
+	尊敬的用户，欢迎您来到电视营业厅！
+ </div>
+ <div class="telphone"></div>
+ <div class="box">
+    <ul class="list">
+        <li id="li_0">
+		</li><li id="li_1">
+		</li><li id="li_2">
+		</li><li id="li_3">
+		</li><li id="li_4">
+		</li><li id="li_5">
+		</li><li id="li_6">
+		</li><li id="li_7"></li>
+    </ul>
+ </div>
+
+<div id="focus"></div>
+ <script src="./js/lib_shb_move3.js"></script>
+ <script src="./js/main.js"></script>
+ <script>
+var moveObj = new SHBMove();
+var arrFocus = [];
+var requesRes;
+var list = [1,2,3,4,5,6,7,8,9,10,11,12,13]
+arrFocus[0] = {
+    focusId:0,
+    startId:0,
+    left:70,
+    top:139,
+    cols:4,//or rows
+    limit:8,
+    len:8,
+	width:279,
+    height: 241,
+    changeLeft:288,
+    changeTop:253,
+    doFocus:function(){},
+    doBlur:function(){},
+	doOk:function(){
+        var curIndex = this.startId+this.focusId;
+		window.location.href="detail.html?res="+escape(JSON.stringify(requesRes[curIndex]))+"&startId="+this.startId+"&focusId"+this.focusId+"&curIndex="+curIndex;
+
+	},
+    next:{
+    }
+}
+function $(id){
+    return document.getElementById(id);
+}
+document.onkeydown = function(e){
+    var keycode = window.event ? event.keyCode : e.which ;
+    var obj = moveObj.cur();
+    switch(keycode){
+        case 37:
+            moveObj.doLeft();
+            return false;
+            break;
+        case 38:
+            if(moveObj.on('up')){
+                if(moveObj.has('pre')){
+                    obj.startId -= obj.limit ;
+                    setDataInfo(requesRes);
+                    obj.focusId += obj.cols;
+                    moveObj.init();
+                }
+            }else{
+                moveObj.doUp();
+            }
+            return false;
+            break;
+        case 39:
+            moveObj.doRight();
+            return false;
+            break;
+        case 40:
+            if(moveObj.on('down')){
+                if(moveObj.has('next')){
+                    obj.startId += obj.limit ;
+                    setDataInfo(requesRes);
+                    obj.focusId = 0;
+                    moveObj.init();
+                }
+            }else{
+                moveObj.doDown();
+            }
+            return false;
+            break;
+		case 13:
+			moveObj.doOk();
+		break;
+    }
+}
+function setDataInfo(data,index){
+    var res;
+    if(index == 1){
+        res = JSON.parse(data).DataArea.ListOfPkg;
+        requesRes = res;
+    }else{
+        res = data;
+    }
+    var obj = moveObj.arrFocus[0];
+	var curObj;
+	var str;
+    console.log(obj.startId+','+obj.focusId);
+    obj.len = res.length ;
+    for(var i=0;i<obj.limit;i++){
+        var index = obj.startId+i;
+        curObj = $("li_" + i);
+        if(index<obj.len){
+         str = "<div class='content' pcode="+res[index].pcode+">"+res[index].pname+"<br/>套餐"+res[index].price+"元/年</div><div class='getin'>详情点击进入</div>";
+        }else{
+            curObj.style.visibility="hidden";
+            return;
+        }
+        curObj.innerHTML = str ;
+        curObj.style.visibility="visible"; 
+        if(i % obj.cols == 1){
+            curObj.style.background="url(./images/list_1.png) no-repeat -5px 0";
+        }else if(i%obj.cols == 2){
+            curObj.style.background="url(./images/list_2.png) no-repeat -5px 0";
+        }else if(i%obj.cols == 3){
+            curObj.style.background="url(./images/list_3.png) no-repeat -5px 0";
+        }else if(i%obj.cols == 0){
+            curObj.style.background="url(./images/list_4.png) no-repeat -5px 0";
+        }
+    }
+    
+
+}
+
+window.onload = function(){
+    var startId,focusId;
+     var url = URL+'/asg?attribute=json_get_product_pkg&current_page=1&page_size=1';
+    moveObj.setFocusDiv($('focus'));
+    moveObj.setFocusArray(arrFocus);
+   
+    getRequest(url,setDataInfo);
+    startId=getParams('startId',window.location.href);
+    if(startId){
+        focusId = getParams('focusId',window.location.href);
+        moveObj.startId = startId;
+        moveObj.focusId = focusId;   
+    }
+    moveObj.init();
+
+}
+
+/*
+
+
+*/
+ </script>
+</body>
+</html>

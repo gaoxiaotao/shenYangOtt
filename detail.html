@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>detail</title>
+    <style type="text/css">
+    *{
+        margin: 0;
+        padding: 0;
+    }
+	 .box{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1280px;
+        height: 720px;
+		background:url(./images/detailbg.png) no-repeat;
+       
+    }
+   
+	.logo{
+		position:absolute;
+		left:54px;
+		top:48px;
+		z-index:999;
+	}
+	.tel{
+		position:absolute;
+		left:1060px;
+		top:650px;
+		z-index:999;
+	}
+	.welcome{
+		position:absolute;
+		left:768px;
+		top:68px;
+		z-index:999;
+		font-size:22px;
+		color:#c2c2c3;
+		padding-left:32px;
+		background:url(./images/tip.png) no-repeat left center;
+	}
+	.content{
+		position:absolute;
+		left:73px;
+		top:147px;
+		color:#c2c3c3;
+		font-size:24px;
+		width:1137px;
+	}
+	.content .title{
+		font-size:28px;
+		text-align:center;
+		margin-top:34px;
+	}
+	.content .about{
+		font-size:26px;
+		margin-left:50px;
+		padding-top:12px;
+	}
+	.left{
+		position:absolute;
+		left:36px;
+		top:134px;
+	}
+	.right{
+		position:absolute;
+		left:580px;
+		top:134px;
+	}
+	.list{
+		width:485px;
+
+	}
+	.list .item{
+		width:485px;
+		height:54px;
+		line-height:54px;
+		padding-left:40px;
+		background:url(./images/trangle.png) no-repeat 15px center;
+		border-radius:5px;
+	}
+	.list .bg5{
+		background-color:rgba(210,210,210,.2);
+	}
+	.list .bg10{
+		background-color:rgba(210,210,210,.1);
+	}
+	#btnLeft{
+		position:absolute;
+		left:120px;
+		top:373px;
+		width:416px;
+		height:64px;
+		background:url(./images/focus.png) no-repeat
+	}
+	#btnRight{
+		position:absolute;
+		left:598px;
+		top:373px;
+		width:416px;
+		height:64px;
+		background:url(./images/blur.png) no-repeat
+	}
+	#btnLeft,#btnRight{
+		text-align:center;
+		line-height:64px;
+		color:#fff;
+		font-size:28px;
+	}
+	</style>
+</head>
+<body bgcolor="transparent">
+<div class="box">
+	 <img class="logo" src="./images/LOGO.png"/>
+	 <img class="tel" src="./images/tel.png"/>
+	 <div class="welcome">
+		尊敬的用户，欢迎您来到电视营业厅！
+	 </div>
+	 <div class="telphone"></div>
+	 <div class="content">
+		<div class="title" id="pname">20M 全网业务二年套餐 金额1590元</div>
+		<div class="about">套餐介绍：</div>
+		<div class="list left">
+			<div class="item bg5" id="div_0"></div>
+			<div class="item bg10" id="div_1"></div>
+			<div class="item bg5" id="div_2"></div>
+			<div class="item bg10" id="div_3"></div>
+		</div>
+		<div class="list right">
+			<div class="item bg5" id="div_4"></div>
+			<div class="item bg10" id="div_5"></div>
+			<div class="item bg5" id="div_6"></div>
+			<div class="item bg10" id="div_7"></div>
+		</div>
+		<div id="btnLeft">确认购买点击扫码付费</div>
+		<div id="btnRight">返回上级菜单选择其他套餐</div>
+	 </div>
+</div>
+ <script src="./js/main.js"></script>
+ <script>
+
+function $(id){
+    return document.getElementById(id);
+}
+var focus = 1;
+var res;
+document.onkeydown = function(e){
+    var keycode = window.event ? event.keyCode : e.which ;
+    var left = $("btnLeft");
+	var right = $("btnRight");
+    switch(keycode){
+        case 37:
+            left.style.background="url(./images/focus.png)";
+			right.style.background="url(./images/blur.png)";
+			focus = 1;
+            return false;
+            break;
+        case 39:
+            left.style.background="url(./images/blur.png)";
+			right.style.background="url(./images/focus.png)";
+			focus = 0;
+            return false;
+            break;
+        case 13:
+			if(focus){
+				window.location.href="scan.html?res="+res;
+			}else{
+				var startId=getParams('startId',window.location.href);
+				var focusId=getParams('focusId',window.location.href);
+				window.location.href="index.html?startId="+startId+"&focusId="+focusId;
+			}
+            return false;
+            break;
+    }
+}
+
+window.onload = function(){
+	var detail = getParams('res',window.location.href);
+		res = detail = JSON.parse(unescape(detail));
+		setData(detail);
+}
+
+function setData(data){
+	$('pname').innerHTML=""+data.pname+" "+data.price+"元";	
+	var len = data.remark.length;
+	var limit = 8;
+	for(var i=0;i<limit;i++){
+		if(i>len-1) break;
+		$("div_"+i).innerHTML=""+data.remark[i];
+	}
+
+}
+
+ </script>
+}
+</body>
+</html>
+

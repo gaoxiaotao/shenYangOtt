@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>scan</title>
+    <style type="text/css">
+    *{
+        margin: 0;
+        padding: 0;
+    }
+	 .box{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1280px;
+        height: 720px;
+		background:url(./images/detailbg1.png) no-repeat;
+       
+    }
+   
+	.logo{
+		position:absolute;
+		left:54px;
+		top:48px;
+		z-index:999;
+	}
+	.tel{
+		position:absolute;
+		left:1060px;
+		top:650px;
+		z-index:999;
+	}
+	.welcome{
+		position:absolute;
+		left:768px;
+		top:68px;
+		z-index:999;
+		font-size:22px;
+		color:#c2c2c3;
+		padding-left:32px;
+		background:url(./images/tip.png) no-repeat left center;
+	}
+	#content{
+		position:absolute;
+		left:247px;
+		top:273px;
+		width:795px;
+		height:289px;
+		background:url(./images/scan.png) no-repeat;
+	}
+	.title{
+		font-size:28px;
+		color:#c2c3c3;
+		text-align:center;
+		margin-top:-102px;
+	}
+	#erweima{
+		position:absolute;
+		left:327px;
+		top:42px;
+		width:140px;
+		height:140px;
+		background-color:#000;
+	}
+	#payRes{
+		position:absolute;
+		left:247px;
+		top:273px;
+		width:795px;
+		height:289px;
+		background:url(./images/pay.png) no-repeat;
+		visibility:hidden;
+	}
+	#resinner{
+		padding-left:264px;
+		width:360px;
+		height:289px;
+		font-size:26px;
+		color:#c2c3c3;
+		background:url(./images/yes.png) no-repeat 162px center;
+
+	}
+	#resinner>div{
+		padding-top:106px;
+	}
+	</style>
+</head>
+<body bgcolor="transparent">
+<div class="box">
+	 <img class="logo" src="./images/LOGO.png"/>
+	 <img class="tel" src="./images/tel.png"/>
+	 <div class="welcome">
+		尊敬的用户，欢迎您来到电视营业厅！
+	 </div>
+	 <div class="telphone"></div>
+	 <div id="content">
+		 <div class="title">
+			20M 全网业务二年套餐
+			<br/>
+			金额：1590元
+		 </div>
+		<div id="erweima"></div>
+	 </div>
+	 <div id="payRes">
+		<div id="resinner">
+			
+		</div>
+	 </div>
+</div>
+<script src="./js/main.js"></script>
+ <script>
+function $(id){
+    return document.getElementById(id);
+}
+document.onkeydown = function(e){
+    var keycode = window.event ? event.keyCode : e.which ;
+    switch(keycode){
+        case 13:    
+        break;
+    }
+}
+
+window.onload = function(){
+	
+	var erweima = $("erweima");
+	
+	//获取二维码
+
+	//轮训用户是否扫码，下单
+	
+	if(true){
+		var urlOdrder =URL +"/asg?attribute=json_qrcode_order&user_code=&pay_org=&p_code=&p_type=";
+		getRequest(urlOdrder,getUrlOdrder);
+	}
+	
+}
+
+function getUrlOdrder(data){
+	//从付费结果中获取订单号
+	var urlRes = URL+"/asg?attribute=json_get_qrcode_pay_status&order_no=21323443434";
+	getRequest(urlRes,getRes);
+}
+
+function getRes(data){
+	var content = $("content");//二维码背景对象
+	var payRes = $("payRes");//结果背景对象
+	var resinner = $("resinner");
+	if(data.DataArea.payResult == 1){
+		resinner.style.backgroundImage = "url(./images/yes.png)";
+		resinner.innerHTML="<div>付款成功，请耐心等候开通，<br/>请不要重复扫码付费。</div>";
+	}else if(data.DataArea.payResult == 2){
+		resinner.style.backgroundImage = "url(./images/no.png)";
+		resinner.innerHTML="<div>付款失败，请联系客服或直接到营业厅订购产品。</div>";
+	}else{
+		console.log("未支付");
+	}
+	content.style.visibility = "hidden";
+	payRes.style.visibility = "visible";
+}	
+
+ </script>
+</body>
+</html>

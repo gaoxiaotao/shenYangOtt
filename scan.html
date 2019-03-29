@@ -54,13 +54,14 @@
 		text-align:center;
 		margin-top:-102px;
 	}
-	#erweima{
+	#qrcode{
 		position:absolute;
 		left:327px;
 		top:42px;
 		width:140px;
 		height:140px;
-		background-color:#000;
+		padding:10px;
+		background-color:#fff;
 	}
 	#payRes{
 		position:absolute;
@@ -94,12 +95,12 @@
 	 </div>
 	 <div class="telphone"></div>
 	 <div id="content">
-		 <div class="title">
+		 <div class="title" id="title">
 			20M 全网业务二年套餐
 			<br/>
 			金额：1590元
 		 </div>
-		<div id="erweima"></div>
+		<div id="qrcode"></div>
 	 </div>
 	 <div id="payRes">
 		<div id="resinner">
@@ -108,7 +109,9 @@
 	 </div>
 </div>
 <script src="./js/main.js"></script>
+<script src="./js/qrcode.js"></script>
  <script>
+ var timer;
 function $(id){
     return document.getElementById(id);
 }
@@ -121,43 +124,60 @@ document.onkeydown = function(e){
 }
 
 window.onload = function(){
-	
-	var erweima = $("erweima");
-	
-	//获取二维码
-
-	//轮训用户是否扫码，下单
-	
-	if(true){
-		var urlOdrder =URL +"/asg?attribute=json_qrcode_order&user_code=&pay_org=&p_code=&p_type=";
-		getRequest(urlOdrder,getUrlOdrder);
+	var res = getParams('res',window.location.href);
+	var detail = JSON.parse(unescape(res));
+	$('title').innerHTML=""+detail.pname+" <br/>金额："+detail.price/100+"元";	
+	getOrder(detail);
+}
+window.onunload = function(){
+	if(timer){
+		clearInterval(timer);
 	}
-	
 }
 
-function getUrlOdrder(data){
-	//从付费结果中获取订单号
-	var urlRes = URL+"/asg?attribute=json_get_qrcode_pay_status&order_no=21323443434";
-	getRequest(urlRes,getRes);
+function getOrder(detail){
+	//获取订单号
+	var urlOdrder =URL +"/asg?attribute=json_qrcode_order&user_code="+PGT+"&pay_org=we_chat_pay&p_code="+detail.pcode+"&p_type=0"; //0为套餐
+	getRequest(urlOdrder,getOdrderRes);
 }
 
-function getRes(data){
-	var content = $("content");//二维码背景对象
-	var payRes = $("payRes");//结果背景对象
+function getOdrderRes(data){
+	//查询订单号，生成二维码
+	var data = JSON.parse(data).DataArea;
+	var qrcode = data.qrCode
+	var urlRes = URL+"/asg?attribute=json_get_qrcode_pay_status&order_no="+data.orderNo;
+	makeQRcode(qrcode);
+	timer = setInterval(function(){
+		//console.log("未支付");
+		getRequest(urlRes,getPayRes);
+	},payTime)
+}
+//根据结果显示内容
+function getPayRes(data){
+	var data = JSON.parse(data).DataArea;
+	if(data.payResult == 0){
+		//未支付
+		return;
+	}
+	clearInterval(timer);
+	var content = $("content");//二维码背景
+	var payRes = $("payRes");//结果背景
 	var resinner = $("resinner");
-	if(data.DataArea.payResult == 1){
+	if(data.payResult == 1){
 		resinner.style.backgroundImage = "url(./images/yes.png)";
 		resinner.innerHTML="<div>付款成功，请耐心等候开通，<br/>请不要重复扫码付费。</div>";
-	}else if(data.DataArea.payResult == 2){
+	}else if(data.payResult == 2){
 		resinner.style.backgroundImage = "url(./images/no.png)";
 		resinner.innerHTML="<div>付款失败，请联系客服或直接到营业厅订购产品。</div>";
-	}else{
-		console.log("未支付");
 	}
 	content.style.visibility = "hidden";
 	payRes.style.visibility = "visible";
 }	
-
+//生成二维码
+function makeQRcode(str){
+	var qr = new QRCode($('qrcode'),{width: 140,height: 140});
+	qr.makeCode(str);
+}
  </script>
 </body>
 </html>

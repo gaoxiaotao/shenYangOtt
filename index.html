@@ -122,7 +122,7 @@ arrFocus[0] = {
     doBlur:function(){},
 	doOk:function(){
         var curIndex = this.startId+this.focusId;
-		window.location.href="detail.html?res="+escape(JSON.stringify(requesRes[curIndex]))+"&startId="+this.startId+"&focusId"+this.focusId+"&curIndex="+curIndex;
+		window.location.href="detail.html?res="+escape(JSON.stringify(requesRes[curIndex]));
 
 	},
     next:{
@@ -143,8 +143,8 @@ document.onkeydown = function(e){
             if(moveObj.on('up')){
                 if(moveObj.has('pre')){
                     obj.startId -= obj.limit ;
+					obj.focusId += obj.cols;
                     setDataInfo(requesRes);
-                    obj.focusId += obj.cols;
                     moveObj.init();
                 }
             }else{
@@ -160,8 +160,8 @@ document.onkeydown = function(e){
             if(moveObj.on('down')){
                 if(moveObj.has('next')){
                     obj.startId += obj.limit ;
+					obj.focusId = 0;
                     setDataInfo(requesRes);
-                    obj.focusId = 0;
                     moveObj.init();
                 }
             }else{
@@ -191,10 +191,10 @@ function setDataInfo(data,index){
         var index = obj.startId+i;
         curObj = $("li_" + i);
         if(index<obj.len){
-         str = "<div class='content' pcode="+res[index].pcode+">"+res[index].pname+"<br/>套餐"+res[index].price+"元/年</div><div class='getin'>详情点击进入</div>";
+         str = "<div class='content' pcode="+res[index].pcode+">"+res[index].pname+"<br/>套餐"+res[index].price/100+"元</div><div class='getin'>详情点击进入</div>";
         }else{
             curObj.style.visibility="hidden";
-            return;
+            continue;
         }
         curObj.innerHTML = str ;
         curObj.style.visibility="visible"; 
@@ -213,18 +213,10 @@ function setDataInfo(data,index){
 }
 
 window.onload = function(){
-    var startId,focusId;
-     var url = URL+'/asg?attribute=json_get_product_pkg&current_page=1&page_size=1';
+    var url = URL+'/asg?attribute=json_get_product_pkg&current_page=1&page_size=10';
     moveObj.setFocusDiv($('focus'));
     moveObj.setFocusArray(arrFocus);
-   
-    getRequest(url,setDataInfo);
-    startId=getParams('startId',window.location.href);
-    if(startId){
-        focusId = getParams('focusId',window.location.href);
-        moveObj.startId = startId;
-        moveObj.focusId = focusId;   
-    }
+    getRequest(url,setDataInfo);//获取列表数据
     moveObj.init();
 
 }

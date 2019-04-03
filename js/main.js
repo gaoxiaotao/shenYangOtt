@@ -1,7 +1,16 @@
 /*查询套餐*/
-var URL = 'http://529aa479.ngrok.io';
-var PGT = "TGT-2-EUcLErA4bEpeBtXhWL6VGTdyRFLxszTlZbueIlyQjwcfWrVwak-cas";
+var URL = '';//HOSTNAME
 var payTime = 5000; //支付轮询时间
+
+function getPgt(){
+    var pgt = "";
+    try{
+        pgt = System.Pgt();
+    }catch(e){
+        pgt = System.Pgt;
+    }
+    return pgt;
+}
 
 function getRequest(url,callback){
     var xhr = new XMLHttpRequest();

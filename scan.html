@@ -88,7 +88,7 @@
 </head>
 <body bgcolor="transparent">
 <div class="box">
-	 <img class="logo" src="./images/LOGO.png"/>
+	 <img class="logo" src="./images/logo1.png"/>
 	 <img class="tel" src="./images/tel.png"/>
 	 <div class="welcome">
 		尊敬的用户，欢迎您来到电视营业厅！
@@ -126,7 +126,7 @@ document.onkeydown = function(e){
 window.onload = function(){
 	var res = getParams('res',window.location.href);
 	var detail = JSON.parse(unescape(res));
-	$('title').innerHTML=""+detail.pname+" <br/>金额："+detail.price/100+"元";	
+	$('title').innerHTML=""+detail.pname+" <br/>金额："+(detail.price/100)+"元";	
 	getOrder(detail);
 }
 window.onunload = function(){
@@ -137,7 +137,7 @@ window.onunload = function(){
 
 function getOrder(detail){
 	//获取订单号
-	var urlOdrder =URL +"/asg?attribute=json_qrcode_order&user_code="+PGT+"&pay_org=we_chat_pay&p_code="+detail.pcode+"&p_type=0"; //0为套餐
+	var urlOdrder =URL +"/asg?attribute=json_qrcode_order&user_code="+getPgt()+"&pay_org=we_chat_pay&p_code="+detail.pcode+"&p_type=0"; //0为套餐
 	getRequest(urlOdrder,getOdrderRes);
 }
 
@@ -166,6 +166,7 @@ function getPayRes(data){
 	if(data.payResult == 1){
 		resinner.style.backgroundImage = "url(./images/yes.png)";
 		resinner.innerHTML="<div>付款成功，请耐心等候开通，<br/>请不要重复扫码付费。</div>";
+		setTimeout(function(){history.go(-2)},5000);
 	}else if(data.payResult == 2){
 		resinner.style.backgroundImage = "url(./images/no.png)";
 		resinner.innerHTML="<div>付款失败，请联系客服或直接到营业厅订购产品。</div>";

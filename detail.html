@@ -79,6 +79,7 @@
 		padding-left:40px;
 		background:url(./images/trangle.png) no-repeat 15px center;
 		border-radius:5px;
+		overflow:hidden;
 	}
 	.list .bg5{
 		background-color:rgba(210,210,210,.2);
@@ -112,7 +113,7 @@
 </head>
 <body bgcolor="transparent">
 <div class="box">
-	 <img class="logo" src="./images/LOGO.png"/>
+	 <img class="logo" src="./images/logo1.png"/>
 	 <img class="tel" src="./images/tel.png"/>
 	 <div class="welcome">
 		尊敬的用户，欢迎您来到电视营业厅！
@@ -181,7 +182,7 @@ window.onload = function(){
 }
 
 function setData(data){
-	$('pname').innerHTML=""+data.pname+" "+data.price/100+"元";	
+	$('pname').innerHTML=""+data.pname+" "+(data.price/100)+"元";	
 	var len = data.remark.length;
 	var limit = 8;
 	for(var i=0;i<limit;i++){

@@ -69,17 +69,24 @@
 		background:url(./images/tip.png) no-repeat left center;
 	}
 	.content{
-		font-size:32px;
+		width:270px;
+		height:115px;
+		overflow:hidden;
+		font-size:30px;
 		margin-top:50px;
+		word-wrap:break-word;
+		word-break:normal; 
 	}
 	.getin{
+		position:absolute;
 		font-size:24px;
-		margin-top:30px;
+		top:170px;
+		left:63px;
 	}
     </style>
 </head>
 <body bgcolor="transparent">
- <img class="logo" src="./images/LOGO.png"/>
+ <img class="logo" src="./images/logo1.png"/>
  <img class="tel" src="./images/tel.png">
  <div class="welcome">
 	尊敬的用户，欢迎您来到电视营业厅！
@@ -105,7 +112,7 @@
 var moveObj = new SHBMove();
 var arrFocus = [];
 var requesRes;
-var list = [1,2,3,4,5,6,7,8,9,10,11,12,13]
+var list = [1,2,3,4,5,6,7,8,9,10,11,12,13];
 arrFocus[0] = {
     focusId:0,
     startId:0,
@@ -185,13 +192,20 @@ function setDataInfo(data,index){
     var obj = moveObj.arrFocus[0];
 	var curObj;
 	var str;
-    console.log(obj.startId+','+obj.focusId);
+    //console.log(obj.startId+','+obj.focusId);
     obj.len = res.length ;
+	var pname,price;
     for(var i=0;i<obj.limit;i++){
         var index = obj.startId+i;
         curObj = $("li_" + i);
         if(index<obj.len){
-         str = "<div class='content' pcode="+res[index].pcode+">"+res[index].pname+"<br/>套餐"+res[index].price/100+"元</div><div class='getin'>详情点击进入</div>";
+		 if(res[index].pname.length > 22){
+			pname = res[index].pname.slice(0,22)+'...';
+		 }else{
+			pname = res[index].pname;
+		 }
+		 price = res[index].price/100;
+         str = "<div class='content' pcode="+res[index].pcode+">"+pname+""+price+"元</div><div class='getin'>详情点击进入</div>";
         }else{
             curObj.style.visibility="hidden";
             continue;
@@ -213,7 +227,7 @@ function setDataInfo(data,index){
 }
 
 window.onload = function(){
-    var url = URL+'/asg?attribute=json_get_product_pkg&current_page=1&page_size=10';
+    var url = URL+'/asg?attribute=json_get_product_pkg&current_page=1&page_size=1000';
     moveObj.setFocusDiv($('focus'));
     moveObj.setFocusArray(arrFocus);
     getRequest(url,setDataInfo);//获取列表数据
